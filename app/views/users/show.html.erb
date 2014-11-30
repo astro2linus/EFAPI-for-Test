@@ -1,0 +1,34 @@
+<div><%= link_to "json", "/api/users/#{@username}" %></div>
+<div id="infoArea"></div>
+<div id="coursesArea"></div>
+
+<script type="text/javascript">
+	var host = '<%= host_url %>';
+	d3.json(host + '/api/users/<%= @username %>', function(info) {
+		var unit_id = info['unit_id'];
+		var units_by_id = info['units_by_id'];
+		var svgUser = d3.select('#infoArea')
+			.html(info.username +  '<br>' + info['member_id'] + '<br>'
+				+ 'course: ' + info.course_id + '<br>' 
+				+ 'unit: ' + info.unit_id
+			);
+
+		var svg = d3.select('#coursesArea').append('svg')
+								.attr('width', 500)
+							 	.attr('height', 800);
+
+		 svg.selectAll('rect')
+			.data(info['courses'])
+			.enter()
+			.append('text')
+			.attr('x', function () {
+				return 10;
+			})
+			.attr('y', function (c, i) {
+				return 50 + i * 20;
+			})
+			.text(function (c) {
+				return  c['course_id'] + ' - ' + c['course_title'];
+			});
+	});
+</script>
